@@ -16,8 +16,8 @@ export const fetchData = async (error, loading, data, endpoint) => {
     try {
       const response = await apiClient.get(import.meta.env.VITE_APIURL + endpoint);
       data.value = response.data;
-      console.log(data.value);
     } catch (axiosError) {
+      console.log(import.meta.env.VITE_APIURL + endpoint)
       console.log('fetch attempt failed', axiosError.message);
     }
 

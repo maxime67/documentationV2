@@ -1,6 +1,6 @@
 <template>
   <div class="flex min-h-screen bg-gray-100">
-    <!-- Backdrop overlay - only shows on mobile when sidebar is open -->
+    <!-- Backdrop overlay - for mobile only -->
     <div
         v-if="isSidebarOpen"
         class="fixed inset-0 bg-gray-600 bg-opacity-50 transition-opacity sm:hidden"

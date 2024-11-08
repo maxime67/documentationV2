@@ -273,7 +273,7 @@ const fetchData = async () => {
   try {
     const selectedSubcats = getSelectedSubcategories();
     const response = await axios.get(
-        `https://easysetup:3000/category${
+        import.meta.env.VITE_APIURL + `${
             selectedSubcats.length ? `?categories=${selectedSubcats.join(',')}` : ''
         }`
     );

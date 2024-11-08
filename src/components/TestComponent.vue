@@ -273,7 +273,7 @@ const fetchData = async () => {
   try {
     const selectedSubcats = getSelectedSubcategories();
     const response = await axios.get(
-        `http://localhost:3000/category${
+        `https://easysetup:3000/category${
             selectedSubcats.length ? `?categories=${selectedSubcats.join(',')}` : ''
         }`
     );

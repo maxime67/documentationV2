@@ -261,7 +261,7 @@ const getSelectedSubcategories = () => {
   Object.entries(selectedCategories).forEach(([category, subcats]) => {
     Object.entries(subcats).forEach(([subcat, isSelected]) => {
       if (isSelected) {
-        selected.push(subcat);
+        selected.push(subcat.toLowerCase());
       }
     });
   });

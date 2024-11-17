@@ -1,13 +1,11 @@
 <template>
   <NavbarView></NavbarView>
   <div class="flex min-h-screen bg-gray-100">
-    <!-- Backdrop overlay - for mobile only -->
     <div
         v-if="isSidebarOpen"
         class="fixed inset-0 bg-gray-600 bg-opacity-50 transition-opacity sm:hidden"
         @click="closeSidebar"
     ></div>
-    <!-- Sidebar -->
     <aside
         :class="[
         'fixed sm:relative w-64 h-screen transition-transform duration-300',
@@ -17,7 +15,6 @@
     >
       <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50">
         <div v-for="category in categories" :key="category.name" class="mb-2">
-          <!-- Category dropdown button -->
           <button
               @click="toggleCategory(category.name)"
               class="w-full flex items-center justify-between p-2 text-gray-900 rounded-lg hover:bg-gray-100"
@@ -39,7 +36,6 @@
             </svg>
           </button>
 
-          <!-- Subcategories dropdown -->
           <div
               v-show="openCategory === category.name"
               class="ml-4 mt-1 space-y-1"
@@ -93,10 +89,8 @@
       </div>
     </aside>
 
-    <!-- Main Content -->
     <div class="flex-1 p-4 sm:ml-0">
       <div class="max-w-6xl mx-auto">
-        <!-- Toggle Sidebar Button (Mobile Only) -->
         <button
             class="sm:hidden mb-4 p-2 rounded-lg bg-gray-200 hover:bg-gray-300"
             @click="toggleSidebar"
@@ -116,7 +110,6 @@
           </svg>
         </button>
 
-        <!-- Stats -->
         <div class="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="bg-white p-4 rounded-lg shadow-sm">
             <div class="text-sm mb-2">Total Documents</div>
@@ -124,7 +117,6 @@
           </div>
         </div>
 
-        <!-- Results Grid -->
         <div v-if="loading" class="text-center py-8">
           <div class="text-gray-500">Loading results...</div>
         </div>
@@ -142,7 +134,7 @@
                 </div>
                 <div class="flex justify-items-center p-2.5 gap-2">
                   <div v-for="tag in item.tags" :key="tag">
-                    <img class="w-16 rounded-md" :src="`../logo/${tag}.png`" />
+                    <img class="w-16 rounded-md" :src="`../logo/${tag}.png`"/>
                   </div>
                 </div>
               </div>
@@ -155,20 +147,20 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import {ref, onMounted} from 'vue';
 import NavbarView from "@/views/NavbarView.vue";
+import {fetchData, fetchCategories} from "@/components/utils/ApiService.vue"
 
-// State
 const openCategory = ref(null);
 const isSidebarOpen = ref(false);
 const loading = ref(false);
+
 const results = ref({});
 const totalDocuments = ref(0);
+
 const categories = ref([]);
 const selectedSubcategories = ref([]);
 
-// Methods
 const toggleCategory = (category) => {
   openCategory.value = openCategory.value === category ? null : category;
 };
@@ -190,41 +182,11 @@ const toggleSubcategory = async (subcategory) => {
   } else {
     selectedSubcategories.value.splice(index, 1);
   }
-
-  await fetchData();
+  await fetchData(loading, results, totalDocuments, selectedSubcategories);
 };
 
-const fetchCategories = async () => {
-  try {
-    const response = await axios.get(import.meta.env.VITE_APIURL + '/categories');
-    categories.value = response.data;
-  } catch (error) {
-    console.error('Error fetching categories:', error);
-  }
-};
-
-const fetchData = async () => {
-  loading.value = true;
-  try {
-    const response = await axios.get(
-        import.meta.env.VITE_APIURL + `/category${
-            selectedSubcategories.value.length
-                ? `?categories=${selectedSubcategories.value.join(',')}`
-                : ''
-        }`
-    );
-    results.value = response.data.results;
-    totalDocuments.value = response.data.totalDocuments;
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  } finally {
-    loading.value = false;
-  }
-};
-
-// Lifecycle hooks
 onMounted(async () => {
-  await fetchCategories();
-  await fetchData();
+  await fetchCategories(categories);
+  await fetchData(loading, results, totalDocuments, selectedSubcategories);
 });
 </script>
